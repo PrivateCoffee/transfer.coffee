@@ -70,9 +70,9 @@
     <div class="container">
       <h1>Transfer.coffee</h1>
       <div class="section">
-        <h2>Upload File</h2>
+        <h2>Share File</h2>
         <input type="file" id="fileInput" />
-        <button onclick="uploadFile()">Upload</button>
+        <button onclick="uploadFile()">Share</button>
         <div class="progress" id="uploadProgress">
           <div class="progress-bar" id="uploadProgressBar">0%</div>
         </div>
@@ -111,7 +111,9 @@
             .then((response) => response.json())
             .then((data) => {
               const uploadResult = document.getElementById("uploadResult");
-              uploadResult.innerHTML = `File uploaded. Share this mnemonic: <strong>${data.mnemonic}</strong>`;
+              uploadResult.innerHTML = `Started sharing file. Share this mnemonic: <strong>${data.mnemonic}</strong>
+              <br>Note that the file will be available for download as long as this page is open.
+              `;
             });
 
           torrent.on("upload", () => {
