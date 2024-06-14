@@ -1,5 +1,4 @@
 const client = new WebTorrent();
-const trackerUrl = "<%= trackerUrl %>";
 
 async function getRTCIceServers() {
   const response = await fetch("/turn-credentials");
