@@ -1,6 +1,13 @@
 const client = new WebTorrent();
+const trackerUrl = "<%= trackerUrl %>";
 
-function uploadFile() {
+async function getRTCIceServers() {
+  const response = await fetch("/turn-credentials");
+  const data = await response.json();
+  return data.iceServers;
+}
+
+async function uploadFile() {
   const fileInput = document.getElementById("fileInput");
   const file = fileInput.files[0];
   const uploadProgressBar = document.getElementById("uploadProgressBar");
@@ -10,8 +17,13 @@ function uploadFile() {
     return;
   }
 
+  const rtcConfig = {
+    iceServers: await getRTCIceServers(),
+  };
+
   const opts = {
     announce: [trackerUrl],
+    rtcConfig: rtcConfig,
   };
 
   client.seed(file, opts, (torrent) => {
@@ -19,9 +31,8 @@ function uploadFile() {
       .then((response) => response.json())
       .then((data) => {
         const uploadResult = document.getElementById("uploadResult");
-        uploadResult.innerHTML = `Started sharing file. Share this mnemonic: <strong>${data.mnemonic}</strong>
-        <br>Note that the file will be available for download as long as this page is open.
-        `;
+        uploadResult.innerHTML = `<p>Sharing your file. Share this mnemonic: <strong>${data.mnemonic}</strong></p>
+        <p>The file will be available for download as long as you keep this page open.</p>`;
       });
 
     torrent.on("upload", () => {
@@ -32,7 +43,7 @@ function uploadFile() {
   });
 }
 
-function downloadFile() {
+async function downloadFile() {
   const mnemonicInput = document.getElementById("mnemonicInput").value;
   const downloadProgressBar = document.getElementById("downloadProgressBar");
 
@@ -41,6 +52,10 @@ function downloadFile() {
     return;
   }
 
+  const rtcConfig = {
+    iceServers: await getRTCIceServers(),
+  };
+
   fetch(`/get-infohash/${mnemonicInput}`)
     .then((response) => response.json())
     .then((data) => {
@@ -48,6 +63,7 @@ function downloadFile() {
 
       const opts = {
         announce: [trackerUrl],
+        rtcConfig: rtcConfig,
       };
 
       client.add(torrentId, opts, (torrent) => {
