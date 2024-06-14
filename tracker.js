@@ -19,7 +19,7 @@ server.on('warning', (err) => {
 });
 
 server.on('listening', () => {
-  console.log(`Tracker is listening on http://{HOST}:{PORT}`);
+  console.log(`Tracker is listening on http://${HOST}:${PORT}`);
 });
 
 server.listen(PORT);
