@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Transfer.coffee</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        color: #333;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .section {
+        margin-bottom: 20px;
+      }
+      input[type="file"],
+      input[type="text"],
+      input[type="url"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #218838;
+      }
+      .progress {
+        width: 100%;
+        background-color: #f3f3f3;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      .progress-bar {
+        width: 0;
+        height: 20px;
+        background-color: #28a745;
+        border-radius: 4px;
+        text-align: center;
+        color: white;
+        line-height: 20px;
+      }
+      .result {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+      }
+    </style>
+    <script src="/js/webtorrent.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Transfer.coffee</h1>
+      <div class="section">
+        <h2>Upload File</h2>
+        <input type="file" id="fileInput" />
+        <button onclick="uploadFile()">Upload</button>
+        <div class="progress" id="uploadProgress">
+          <div class="progress-bar" id="uploadProgressBar">0%</div>
+        </div>
+        <div class="result" id="uploadResult"></div>
+      </div>
+      <div class="section">
+        <h2>Download File</h2>
+        <input type="text" id="mnemonicInput" placeholder="Enter mnemonic" />
+        <button onclick="downloadFile()">Download</button>
+        <div class="progress" id="downloadProgress">
+          <div class="progress-bar" id="downloadProgressBar">0%</div>
+        </div>
+        <div class="result" id="downloadResult"></div>
+      </div>
+    </div>
+    <script>
+      const client = new WebTorrent();
+      const trackerUrl = "<%= trackerUrl %>";
+
+      function uploadFile() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        const uploadProgressBar = document.getElementById("uploadProgressBar");
+
+        if (!file) {
+          alert("Please select a file to upload.");
+          return;
+        }
+
+        const opts = {
+          announce: [trackerUrl],
+        };
+
+        client.seed(file, opts, (torrent) => {
+          fetch(`/generate-mnemonic/${torrent.infoHash}`)
+            .then((response) => response.json())
+            .then((data) => {
+              const uploadResult = document.getElementById("uploadResult");
+              uploadResult.innerHTML = `File uploaded. Share this mnemonic: <strong>${data.mnemonic}</strong>`;
+            });
+
+          torrent.on("upload", () => {
+            const progress = Math.round(
+              (torrent.uploaded / torrent.length) * 100
+            );
+            uploadProgressBar.style.width = `${progress}%`;
+            uploadProgressBar.textContent = `${progress}%`;
+          });
+        });
+      }
+
+      function downloadFile() {
+        const mnemonicInput = document.getElementById("mnemonicInput").value;
+        const downloadProgressBar = document.getElementById(
+          "downloadProgressBar"
+        );
+
+        if (!mnemonicInput) {
+          alert("Please enter a mnemonic.");
+          return;
+        }
+
+        fetch(`/get-infohash/${mnemonicInput}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const torrentId = data.infoHash;
+
+            const opts = {
+              announce: [trackerUrl],
+            };
+
+            client.add(torrentId, opts, (torrent) => {
+              torrent.files[0].getBlob((err, blob) => {
+                if (err) {
+                  const downloadResult =
+                    document.getElementById("downloadResult");
+                  downloadResult.innerHTML = `Error: ${err.message}`;
+                  return;
+                }
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = torrent.files[0].name;
+                a.click();
+
+                const downloadResult =
+                  document.getElementById("downloadResult");
+                downloadResult.innerHTML = `File downloaded: <strong>${torrent.files[0].name}</strong>`;
+              });
+
+              torrent.on("download", () => {
+                const progress = Math.round(
+                  (torrent.downloaded / torrent.length) * 100
+                );
+                downloadProgressBar.style.width = `${progress}%`;
+                downloadProgressBar.textContent = `${progress}%`;
+              });
+            });
+          });
+      }
+    </script>
+  </body>
+</html>
