@@ -8,13 +8,31 @@
   <body>
     <div class="container">
       <h1>Transfer.coffee</h1>
+      <div class="section" id="intro">
+        <p>
+          Transfer.coffee is a simple way to share files between devices. Just
+          select a file and share the generated URL with the recipient. The
+          recipient can then download the file by entering the mnemonic.
+        </p>
+        <p>
+          The files are shared using WebTorrent, a peer-to-peer file sharing
+          protocol. This means that the file is not stored on a central server
+          and is instead shared directly between the sender and the recipient.
+        </p>
+      </div>
       <div class="section" id="uploadSection">
         <h2>Share File</h2>
         <input type="file" id="fileInput" />
         <button onclick="uploadFile()">Share</button>
         <div class="result" id="uploadResult"></div>
         <div class="result" id="uploadStats"></div>
-        <button id="copyButton" style="display: none;" onclick="copyToClipboard()">Copy URL</button>
+        <button
+          id="copyButton"
+          style="display: none"
+          onclick="copyToClipboard()"
+        >
+          Copy URL
+        </button>
       </div>
       <div class="section" id="downloadSection">
         <h2>Receive File</h2>
@@ -25,7 +43,24 @@
         </div>
         <div class="result" id="downloadResult"></div>
         <div class="result" id="downloadStats"></div>
-
+      </div>
+      <div class="section" id="footer">
+        <h2>About</h2>
+        <p>
+          All files are transferred using WebTorrent. This means that the file
+          is not stored on a central server and is instead shared directly
+          between the sender and the recipient. Note that this means that the IP
+          addresses of the sender and recipient may be exposed to each other.
+          Files are only available for download as long as someone is seeding
+          them, i.e. as long as someone with a full copy of the file keeps the
+          page open.
+        </p>
+        <p>
+          Transfer.coffee is open source. You can view the source code on
+          <a href="https://git.private.coffee/PrivateCoffee/transfer.coffee">
+            Private.coffee Git</a
+          >.
+        </p>
       </div>
     </div>
     <script>
