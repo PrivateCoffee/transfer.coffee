@@ -4,10 +4,10 @@ const PORT = process.env.TRACKER_PORT || 8106;
 const HOST = process.env.TRACKER_HOST || "localhost";
 
 const server = new Server({
-  udp: true,
+  udp: false,
   http: true,
   ws: true,
-  stats: true,
+  stats: false,
 });
 
 server.on("error", (err) => {
