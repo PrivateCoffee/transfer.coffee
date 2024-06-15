@@ -4,6 +4,8 @@
 [![Matrix](https://shields.private.coffee/badge/Matrix-join%20us!-blue?logo=matrix)](https://matrix.to/#/#private.coffee:private.coffee)
 [![Latest Git Commit](https://shields.private.coffee/gitea/last-commit/privatecoffee/transfer.coffee?gitea_url=https://git.private.coffee)](https://git.private.coffee/privatecoffee/transfer.coffee)
 
+<img src="public/img/logo.png" alt="Transfer.coffee Logo" width="200" align="right">
+
 Transfer.coffee is a simple Node.js web application that allows users to share files using WebTorrent. Users can upload files, generate mnemonic seeds, and share these seeds with others to download the files directly via peer-to-peer connections. The application supports optional configuration of STUN and TURN servers to facilitate NAT traversal.
 
 ## Features
