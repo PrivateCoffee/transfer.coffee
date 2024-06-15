@@ -14,19 +14,25 @@
         <button onclick="uploadFile()">Share</button>
         <div class="result" id="uploadResult"></div>
         <div class="result" id="uploadStats"></div>
+        <button id="copyButton" style="display: none;" onclick="copyToClipboard()">Copy URL</button>
       </div>
       <div class="section" id="downloadSection">
         <h2>Receive File</h2>
         <input type="text" id="mnemonicInput" placeholder="Enter mnemonic" />
-        <button onclick="downloadFile()">Receive</button>
+        <button id="downloadButton" onclick="downloadFile()">Receive</button>
         <div class="progress" id="downloadProgress">
           <div class="progress-bar" id="downloadProgressBar">0%</div>
         </div>
         <div class="result" id="downloadResult"></div>
+        <div class="result" id="downloadStats"></div>
+
       </div>
     </div>
     <script>
       const trackerUrl = "<%= trackerUrl %>";
+      <% if (typeof mnemonic !== 'undefined') { %>
+        const mnemonic = "<%= mnemonic %>";
+      <% } %>
     </script>
     <script src="/js/index.js"></script>
   </body>
