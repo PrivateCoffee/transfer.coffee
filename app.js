@@ -17,10 +17,6 @@ const turnTTL = 86400;
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) => {
-  res.render("index", { trackerUrl });
-});
-
 app.get("/generate-mnemonic/:infoHash", (req, res) => {
   const infoHash = req.params.infoHash;
   const mnemonic = bip39.entropyToMnemonic(infoHash);
