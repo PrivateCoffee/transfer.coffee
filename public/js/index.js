@@ -41,6 +41,7 @@ async function uploadFile() {
         const downloadUrl = `${
           window.location.origin
         }/${data.mnemonic.replaceAll(" ", ".")}`;
+        history.pushState({}, "", `/${data.mnemonic.replaceAll(" ", ".")}`);
         uploadResult.innerHTML = `Seeding file. Share this mnemonic: <strong>${data.mnemonic}</strong>
         <br>Note that the file will be available for download only as long as you keep this page open.`;
         copyButton.style.display = "inline-block";
