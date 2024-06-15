@@ -9,7 +9,7 @@ async function getRTCIceServers() {
 async function uploadFile() {
   const fileInput = document.getElementById("fileInput");
   const file = fileInput.files[0];
-  const uploadProgressBar = document.getElementById("uploadProgressBar");
+  const uploadStats = document.getElementById("uploadStats");
 
   if (!file) {
     alert("Please select a file to upload.");
@@ -25,21 +25,47 @@ async function uploadFile() {
     rtcConfig: rtcConfig,
   };
 
-  client.seed(file, opts, (torrent) => {
+  client.seed(file, opts, async (torrent) => {
+    downloadSection.style.display = 'none';
+    uploadSection.style.display = 'block';
+
     fetch(`/generate-mnemonic/${torrent.infoHash}`)
       .then((response) => response.json())
       .then((data) => {
         const uploadResult = document.getElementById("uploadResult");
-        uploadResult.innerHTML = `<p>Sharing your file. Share this mnemonic: <strong>${data.mnemonic}</strong></p>
-        <p>The file will be available for download as long as you keep this page open.</p>`;
+        uploadResult.innerHTML = `File uploaded. Share this mnemonic: <strong>${data.mnemonic}</strong>`;
       });
 
-    torrent.on("upload", () => {
-      const progress = Math.round((torrent.uploaded / torrent.length) * 100);
-      uploadProgressBar.style.width = `${progress}%`;
-      uploadProgressBar.textContent = `${progress}%`;
-    });
+    let totalPeers = 0;
+    const seenPeers = new Set();
+
+    setInterval(async () => {
+      for (const wire of torrent.wires) {
+        let peerIdHash;
+        try {
+          peerIdHash = await sha256(wire.peerId);
+        } catch (e) {
+          peerIdHash = wire.peerId;
+        }
+
+        if (!seenPeers.has(peerIdHash)) {
+          seenPeers.add(peerIdHash);
+          totalPeers += 1;
+        }
+      }
+
+      const uploaded = (torrent.uploaded / (1024 * 1024)).toFixed(2);
+      uploadStats.innerHTML = `Uploaded: ${uploaded} MB to ${totalPeers} peer(s)`;
+    }, 1000);
   });
+}
+
+async function sha256(str) {
+  const buffer = new TextEncoder().encode(str);
+  const hash = await crypto.subtle.digest("SHA-256", buffer);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 async function downloadFile() {
@@ -66,6 +92,9 @@ async function downloadFile() {
       };
 
       client.add(torrentId, opts, (torrent) => {
+        downloadSection.style.display = 'block';
+        uploadSection.style.display = 'none';
+
         torrent.files[0].getBlob((err, blob) => {
           if (err) {
             const downloadResult = document.getElementById("downloadResult");

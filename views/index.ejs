@@ -8,16 +8,14 @@
   <body>
     <div class="container">
       <h1>Transfer.coffee</h1>
-      <div class="section">
+      <div class="section" id="uploadSection">
         <h2>Share File</h2>
         <input type="file" id="fileInput" />
         <button onclick="uploadFile()">Share</button>
-        <div class="progress" id="uploadProgress">
-          <div class="progress-bar" id="uploadProgressBar">0%</div>
-        </div>
         <div class="result" id="uploadResult"></div>
+        <div class="result" id="uploadStats"></div>
       </div>
-      <div class="section">
+      <div class="section" id="downloadSection">
         <h2>Receive File</h2>
         <input type="text" id="mnemonicInput" placeholder="Enter mnemonic" />
         <button onclick="downloadFile()">Receive</button>
@@ -27,7 +25,9 @@
         <div class="result" id="downloadResult"></div>
       </div>
     </div>
-    <script>const trackerUrl = "<%= trackerUrl %>";</script>
+    <script>
+      const trackerUrl = "<%= trackerUrl %>";
+    </script>
     <script src="/js/index.js"></script>
   </body>
 </html>
