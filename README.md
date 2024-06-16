@@ -37,7 +37,7 @@ cd transfer.coffee
 npm install
 ```
 
-3. Optional, but recommended for production: Put the application behind a reverse proxy (e.g. Caddy or nginx) and configure SSL.
+3. Optional, but recommended for production: Put the application (:8105) and the tracker (:8106) behind a reverse proxy (e.g. Caddy or nginx) and configure SSL.
 
 ## Configuration
 
@@ -66,7 +66,7 @@ export TURN_SECRET="your-static-auth-secret" # Required if you have a TURN serve
 npm start
 ```
 
-3. Open your browser and navigate to `http://localhost:3000`.
+3. Open your browser and navigate to `http://localhost:8105` (or the URL you have configured in your reverse proxy)
 
 ## Usage
 
