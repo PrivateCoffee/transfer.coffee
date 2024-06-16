@@ -19,9 +19,6 @@
     "bip39": "^3.1.0",
     "bittorrent-tracker": "^11.1.0",
     "ejs": "^3.1.10",
-    "express": "^4.19.2",
-    "multer": "^1.4.5-lts.1",
-    "socket.io": "^4.7.5",
-    "webtorrent": "^2.4.1"
+    "express": "^4.19.2"
   }
 }
