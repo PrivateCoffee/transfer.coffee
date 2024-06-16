@@ -165,6 +165,7 @@ async function downloadFile() {
             torrent.done ? "Completed, seeding" : "Downloading"
           }
           <br><strong>Peers:</strong> ${torrent.numPeers}
+          <br>
           <br><strong>Downloaded:</strong> ${(
             torrent.downloaded /
             (1024 * 1024)
@@ -176,6 +177,7 @@ async function downloadFile() {
             (1024 * 1024)
           ).toFixed(2)} MB/s
           <br><strong>ETA:</strong> ${torrent.timeRemaining} seconds
+          <br>
           <br><strong>Uploaded:</strong> ${(
             torrent.uploaded /
             (1024 * 1024)
