@@ -5,7 +5,7 @@ const HOST = process.env.TRACKER_HOST || "localhost";
 
 const server = new Server({
   udp: false,
-  http: true,
+  http: false,
   ws: true,
   stats: false,
 });
