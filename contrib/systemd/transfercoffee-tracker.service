@@ -1,0 +1,23 @@
+[Unit]
+Description=Transfer.coffee Tracker
+After=syslog.target
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+
+User=transfercoffee
+Group=transfercoffee
+
+# Replace /opt/transfer.coffee with where you cloned the repo to
+WorkingDirectory=/opt/transfer.coffee
+ExecStart=/usr/bin/npm run tracker
+
+Restart=always
+RestartSec=86400s
+
+LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target

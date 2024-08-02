@@ -1,0 +1,27 @@
+[Unit]
+Description=Transfer.coffee
+After=syslog.target
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+
+# Replace this with the user you want to run as
+User=transfercoffee
+Group=transfercoffee
+
+# Replace /opt/transfer.coffee with where you cloned the repo to
+WorkingDirectory=/opt/transfer.coffee
+ExecStart=/usr/bin/npm run start
+
+# Create a .env file in the root of the project with the environment variables (see README.md)
+EnvironmentFile = /opt/transfer.coffee/.env
+
+Restart=always
+RestartSec=86400s
+
+LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target

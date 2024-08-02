@@ -1,0 +1,9 @@
+# Simple example of how to use Caddy for Transfer.coffee
+
+transfer.example www.transfer.example {
+	reverse_proxy localhost:8105
+}
+
+tracker.transfer.example {
+	reverse_proxy localhost:8106
+}
