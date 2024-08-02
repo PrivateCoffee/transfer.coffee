@@ -1,3 +1,6 @@
+# Install this as /etc/systemd/system/transfercoffee-tracker.service
+# Then run `systemctl enable --now transfercoffee-tracker` to start it now and on boot
+
 [Unit]
 Description=Transfer.coffee Tracker
 After=syslog.target
@@ -6,6 +9,7 @@ After=network.target
 [Service]
 Type=simple
 
+# Replace this with the user/group you want to run as
 User=transfercoffee
 Group=transfercoffee
 
