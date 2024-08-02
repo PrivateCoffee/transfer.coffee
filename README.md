@@ -69,6 +69,10 @@ npm start
 
 4. Open your browser and navigate to `http://localhost:8105` (or the URL you have configured in your reverse proxy)
 
+### Production
+
+For production, you should use a process manager like systemd to keep the application running. You can use the systemd files provided in [contrib/systemd](contrib/systemd) as a starting point.
+
 ## Usage
 
 ### Sharing a File
