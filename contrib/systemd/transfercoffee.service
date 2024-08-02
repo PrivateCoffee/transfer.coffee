@@ -4,7 +4,6 @@ After=syslog.target
 After=network.target
 
 [Service]
-RestartSec=2s
 Type=simple
 
 # Replace this with the user you want to run as
@@ -19,9 +18,7 @@ ExecStart=/usr/bin/npm run start
 EnvironmentFile = /opt/transfer.coffee/.env
 
 Restart=always
-RestartSec=86400s
-
-LimitNOFILE=infinity
+RestartSec=2s
 
 [Install]
 WantedBy=multi-user.target
