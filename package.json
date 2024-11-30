@@ -1,5 +1,5 @@
 {
-  "name": "transfer.coffee",
+  "name": "transfercoffee",
   "version": "0.0.2",
   "description": "A WebTorrent-based file transfer application",
   "main": "app.js",
