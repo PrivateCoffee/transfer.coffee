@@ -17,6 +17,12 @@ Transfer.coffee is a simple Node.js web application that allows users to share f
 - Configurable tracker URL
 - Bundled WebTorrent tracker
 
+# Instances
+
+| Provided by    | Country | URL                                        | Description       |
+| -------------- | ------- | ------------------------------------------ | ----------------- |
+| Private.coffee | Austria | [transfer.coffee](https://transfer.coffee) | Official instance |
+
 ## Prerequisites
 
 - Node.js (tested with v22.3 but anything recent should work)
