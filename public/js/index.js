@@ -45,9 +45,8 @@ async function uploadFile(trackerUrl) {
         if (!response.ok) throw new Error("Failed to generate mnemonic");
         const data = await response.json();
         const uploadResult = document.getElementById("uploadResult");
-        const downloadUrl = `${
-          window.location.origin
-        }/${data.mnemonic.replaceAll(" ", ".")}`;
+        const downloadUrl = `${window.location.origin
+          }/${data.mnemonic.replaceAll(" ", ".")}`;
         history.pushState({}, "", `/${data.mnemonic.replaceAll(" ", ".")}`);
         uploadResult.innerHTML = `Seeding file. Share this mnemonic: <strong>${data.mnemonic}</strong>
         <br>Note that the file will be available for download only as long as you keep this page open.`;
@@ -168,27 +167,26 @@ async function downloadFile(trackerUrl) {
         downloadResult.innerHTML = `Downloading:
         <strong>${torrent.files[0].name}</strong>
         <br>
-        <br><strong>Status:</strong> ${
-          torrent.done ? "Completed, seeding" : "Downloading"
-        }
+        <br><strong>Status:</strong> ${torrent.done ? "Completed, seeding" : "Downloading"
+          }
         <br><strong>Peers:</strong> ${torrent.numPeers}
         <br>
         <br><strong>Downloaded:</strong> ${(
-          torrent.downloaded /
-          (1024 * 1024)
-        ).toFixed(2)} MB / ${(torrent.length / (1024 * 1024)).toFixed(
-          2
-        )} MB (${progress}%)
+            torrent.downloaded /
+            (1024 * 1024)
+          ).toFixed(2)} MB / ${(torrent.length / (1024 * 1024)).toFixed(
+            2
+          )} MB (${progress}%)
         <br><strong>Speed:</strong> ${(
-          torrent.downloadSpeed /
-          (1024 * 1024)
-        ).toFixed(2)} MB/s
-        <br><strong>ETA:</strong> ${torrent.timeRemaining} seconds
+            torrent.downloadSpeed /
+            (1024 * 1024)
+          ).toFixed(2)} MB/s
+        <br><strong>ETA:</strong> ${(torrent.timeRemaining / 1000).toFixed(0)} seconds
         <br>
         <br><strong>Uploaded:</strong> ${(
-          torrent.uploaded /
-          (1024 * 1024)
-        ).toFixed(2)} MB
+            torrent.uploaded /
+            (1024 * 1024)
+          ).toFixed(2)} MB
         <br><strong>Ratio:</strong> ${torrent.ratio.toFixed(2)}`;
         return;
       }
