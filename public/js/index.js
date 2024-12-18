@@ -11,23 +11,25 @@ async function getRTCIceServers() {
   }
 }
 
-async function uploadFile(trackerUrl) {
+async function uploadFiles(trackerUrl) {
   const fileInput = document.getElementById("fileInput");
-  const file = fileInput.files[0];
+  const files = Array.from(fileInput.files);
   const uploadStats = document.getElementById("uploadStats");
   const uploadSection = document.getElementById("uploadSection");
   const downloadSection = document.getElementById("downloadSection");
   const copyButton = document.getElementById("copyButton");
   const uploadButton = document.getElementById("uploadButton");
 
-  if (!file) {
-    alert("Please select a file to upload.");
+  if (!files.length) {
+    alert("Please select at least one file to upload.");
     return;
   }
 
   downloadSection.style.display = "none";
   uploadSection.style.display = "block";
   uploadButton.disabled = true;
+
+  uploadStats.innerHTML = '';
 
   try {
     const rtcConfig = {
@@ -39,17 +41,16 @@ async function uploadFile(trackerUrl) {
       rtcConfig: rtcConfig,
     };
 
-    client.seed(file, opts, async (torrent) => {
+    client.seed(files, opts, async (torrent) => {
       try {
         const response = await fetch(`/generate-mnemonic/${torrent.infoHash}`);
         if (!response.ok) throw new Error("Failed to generate mnemonic");
         const data = await response.json();
         const uploadResult = document.getElementById("uploadResult");
-        const downloadUrl = `${window.location.origin
-          }/${data.mnemonic.replaceAll(" ", ".")}`;
+        const downloadUrl = `${window.location.origin}/${data.mnemonic.replaceAll(" ", ".")}`;
         history.pushState({}, "", `/${data.mnemonic.replaceAll(" ", ".")}`);
-        uploadResult.innerHTML = `Seeding file. Share this mnemonic: <strong>${data.mnemonic}</strong>
-        <br>Note that the file will be available for download only as long as you keep this page open.`;
+        uploadResult.innerHTML = `Seeding files. Share this mnemonic: <strong>${data.mnemonic}</strong>
+        <br>Note that the files will be available for download only as long as you keep this page open.`;
         copyButton.style.display = "inline-block";
         copyButton.setAttribute("data-url", downloadUrl);
       } catch (error) {
@@ -80,7 +81,7 @@ async function uploadFile(trackerUrl) {
       }, 1000);
     });
   } catch (error) {
-    console.error("Error sharing file:", error);
+    console.error("Error sharing files:", error);
   }
 }
 
@@ -101,7 +102,7 @@ async function sha256(str) {
     .join("");
 }
 
-async function downloadFile(trackerUrl) {
+async function downloadFiles(trackerUrl) {
   const mnemonicInput = document.getElementById("mnemonicInput").value;
   const downloadProgressBar = document.getElementById("downloadProgressBar");
   const downloadButton = document.getElementById("downloadButton");
@@ -134,68 +135,48 @@ async function downloadFile(trackerUrl) {
     };
 
     client.add(torrentId, opts, (torrent) => {
-      torrent.files[0].getBlob((err, blob) => {
-        if (err) {
-          downloadResult.innerHTML = `Error: ${err.message}`;
-          return;
-        }
+      torrent.files.forEach((file) => {
+        file.getBlob((err, blob) => {
+          if (err) {
+            downloadResult.innerHTML = `Error: ${err.message}`;
+            return;
+          }
 
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = torrent.files[0].name;
-        a.click();
-
-        downloadResult.innerHTML = `File downloaded: <strong>${torrent.files[0].name}</strong>`;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = file.name;
+          a.click();
+        });
       });
 
       torrent.on("download", () => {
-        const progress = Math.round(
-          (torrent.downloaded / torrent.length) * 100
-        );
+        const progress = Math.round((torrent.downloaded / torrent.length) * 100);
         downloadProgressBar.style.width = `${progress}%`;
         downloadProgressBar.textContent = `${progress}%`;
       });
-    });
 
-    setInterval(() => {
-      if (client.get(torrentId)) {
-        const torrent = client.get(torrentId);
-        const progress = Math.round(
-          (torrent.downloaded / torrent.length) * 100
-        );
+      setInterval(() => {
+        const progressText = torrent.files.map(file => `${file.name}`).join(', ');
+        const progress = Math.round((torrent.downloaded / torrent.length) * 100);
+
         downloadResult.innerHTML = `Downloading:
-        <strong>${torrent.files[0].name}</strong>
+        <strong>${progressText}</strong>
         <br>
-        <br><strong>Status:</strong> ${torrent.done ? "Completed, seeding" : "Downloading"
-          }
+        <br><strong>Status:</strong> ${torrent.done ? "Completed, seeding" : "Downloading"}
         <br><strong>Peers:</strong> ${torrent.numPeers}
         <br>
-        <br><strong>Downloaded:</strong> ${(
-            torrent.downloaded /
-            (1024 * 1024)
-          ).toFixed(2)} MB / ${(torrent.length / (1024 * 1024)).toFixed(
-            2
-          )} MB (${progress}%)
-        <br><strong>Speed:</strong> ${(
-            torrent.downloadSpeed /
-            (1024 * 1024)
-          ).toFixed(2)} MB/s
+        <br><strong>Downloaded:</strong> ${(torrent.downloaded / (1024 * 1024)).toFixed(2)} MB / ${(torrent.length / (1024 * 1024)).toFixed(2)} MB (${progress}%)
+        <br><strong>Speed:</strong> ${(torrent.downloadSpeed / (1024 * 1024)).toFixed(2)} MB/s
         <br><strong>ETA:</strong> ${(torrent.timeRemaining / 1000).toFixed(0)} seconds
         <br>
-        <br><strong>Uploaded:</strong> ${(
-            torrent.uploaded /
-            (1024 * 1024)
-          ).toFixed(2)} MB
+        <br><strong>Uploaded:</strong> ${(torrent.uploaded / (1024 * 1024)).toFixed(2)} MB
         <br><strong>Ratio:</strong> ${torrent.ratio.toFixed(2)}`;
-        return;
-      }
-
-      downloadResult.innerHTML = "File not found. Please check the mnemonic.";
-    }, 1000);
+      }, 1000);
+    });
   } catch (error) {
-    console.error("Error downloading file:", error);
-    alert("Failed to download file. Please check the mnemonic and try again.");
+    console.error("Error downloading files:", error);
+    alert("Failed to download files. Please check the mnemonic and try again.");
   } finally {
     downloadButton.disabled = false;
   }
@@ -208,13 +189,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document
     .getElementById("uploadButton")
-    .addEventListener("click", () => uploadFile(trackerUrl));
+    .addEventListener("click", () => uploadFiles(trackerUrl));
   document
     .getElementById("copyButton")
     .addEventListener("click", copyToClipboard);
   document
     .getElementById("downloadButton")
-    .addEventListener("click", () => downloadFile(trackerUrl));
+    .addEventListener("click", () => downloadFiles(trackerUrl));
 
   if (mnemonic) {
     const mnemonicInput = document.getElementById("mnemonicInput");

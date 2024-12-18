@@ -17,27 +17,23 @@
       <div class="section" id="intro">
         <p>
           Transfer.coffee is a simple way to share files between devices. Just
-          select a file and share the generated URL with the recipient. The
-          recipient can then download the file by entering the mnemonic.
+          select one or multiple files and share the generated URL with the
+          recipient. The recipient can then download the file by entering the
+          mnemonic.
         </p>
         <p>
           The files are shared using WebTorrent, a peer-to-peer file sharing
-          protocol. This means that the file is not stored on a central server
+          protocol. This means that the files are not stored on a central server
           and is instead shared directly between the sender and the recipient.
         </p>
       </div>
       <div class="section" id="uploadSection">
         <h2>Share File</h2>
-        <input type="file" id="fileInput" />
+        <input type="file" id="fileInput" multiple />
         <button id="uploadButton">Share</button>
         <div class="result" id="uploadResult"></div>
         <div class="result" id="uploadStats"></div>
-        <button
-          id="copyButton"
-          style="display: none"
-        >
-          Copy URL
-        </button>
+        <button id="copyButton" style="display: none">Copy URL</button>
       </div>
       <div class="section" id="downloadSection">
         <h2>Receive File</h2>
@@ -70,7 +66,12 @@
         </p>
       </div>
     </div>
-    <div id="config" data-tracker-url="<%= trackerUrl %>" data-mnemonic="<%= mnemonic %>" style="display: none;"></div>
+    <div
+      id="config"
+      data-tracker-url="<%= trackerUrl %>"
+      data-mnemonic="<%= mnemonic %>"
+      style="display: none"
+    ></div>
     <script src="/js/index.js"></script>
   </body>
 </html>

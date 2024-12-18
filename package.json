@@ -1,6 +1,6 @@
 {
   "name": "transfercoffee",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A WebTorrent-based file transfer application",
   "main": "app.js",
   "type": "module",

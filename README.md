@@ -11,6 +11,7 @@ Transfer.coffee is a simple Node.js web application that allows users to share f
 ## Features
 
 - Peer-to-peer file sharing using WebTorrent
+- Transfer multiple files at once
 - Mnemonic seed generation for easy file sharing
 - Optional STUN and TURN server configuration for NAT traversal
 - Progress indicators for file upload and download
